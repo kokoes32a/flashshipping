@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>شحنات العميل</title>
+</head>
+<body>
+  <h2>شحنات العميل</h2>
+  <table id="shipmentTable">
+    <thead>
+      <tr>
+        <th>اسم العميل</th>
+        <th>عنوان العميل</th>
+        <th>التحصيل بالشحن</th>
+        <th>حالة الشحنة</th>
+      </tr>
+    </thead>
+    <tbody id="shipmentTableBody"></tbody>
+  </table>
+
+  <script>
+    // استخراج اسم العميل من URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientName = urlParams.get('username');
+
+    // إرسال طلب GET إلى API الخاص بك لجلب بيانات الشحنات الخاصة بالعميل
+    fetch(`http://localhost:3000/shipments?username=${clientName}`)
+      .then(response => response.json())
+      .then(data => {
+        const tableBody = document.getElementById('shipmentTableBody');
+        data.forEach(shipment => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${shipment.username}</td>
+            <td>${shipment.address}</td>
+            <td>${shipment.collection}</td>
+            <td>${shipment.status || 'غير محدد'}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error('حدث خطأ أثناء جلب البيانات: ', error);
+      });
+  </script>
+</body>
+</html>
